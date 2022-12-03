@@ -84,6 +84,4 @@ export const uploadFile = async () => {
   });
 };
 
-
-
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');

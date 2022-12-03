@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
+import { Web3Storage } from 'web3.storage';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
   connectSnap,
@@ -16,6 +17,9 @@ import {
   SendHelloButton,
   Card,
 } from '../components';
+
+// const TOKEN = process.env.WEB3_STORAGE_API_KEY;
+const TOKEN = 'WEB3.STORAGE API KEY';
 
 const Container = styled.div`
   display: flex;
@@ -128,12 +132,72 @@ const Index = () => {
     }
   };
 
-  const handleUpload = async () => {
+  function jsonFile(filename: string, obj: { path: string; caption?: string }) {
+    return new File([JSON.stringify(obj)], filename);
+  }
+
+  function makeGatewayURL(cid: string, path: string) {
+    return `https://${cid}.ipfs.dweb.link/${encodeURIComponent(path)}`;
+  }
+
+  function updateUploadInfo(
+    cid: string,
+    metadataGatewayURL: string,
+    imageGatewayURL: string,
+    imageURI: string,
+    metadataURI: string,
+  ) {
+    console.log(cid);
+    console.log(metadataGatewayURL);
+    console.log(imageGatewayURL);
+    console.log(imageURI);
+    console.log(metadataURI);
+  }
+
+  const handleUpload = async (e: InputEvent) => {
+    const namePrefix = 'ImageGallery';
+
+    const { files } = e.target as HTMLInputElement;
+    if (files === null || files.length < 1) {
+      console.log('nothing selected');
+      return;
+    }
+
+    // handleFileSelected(e.target.files[0])
     try {
+      const uploadName = [namePrefix, ''].join('|');
+      const web3storage = new Web3Storage({ token: TOKEN });
+      const imageFile = files[0];
+      const metadataFile = jsonFile('metadata.json', { path: imageFile.name });
+
+      const cid = await web3storage.put([imageFile, metadataFile], {
+        // the name is viewable at https://web3.storage/files and is included in the status and list API responses
+        name: uploadName,
+
+        onRootCidReady: (localCid) => {
+          console.log('Local CID: ', localCid);
+        },
+
+        onStoredChunk: (bytes) =>
+          console.log(`sent ${bytes.toLocaleString()} bytes to web3.storage`),
+      });
+
+      const metadataGatewayURL = makeGatewayURL(cid, 'metadata.json');
+      const imageGatewayURL = makeGatewayURL(cid, imageFile.name);
+      const imageURI = `ipfs://${cid}/${imageFile.name}`;
+      const metadataURI = `ipfs://${cid}/metadata.json`;
+      updateUploadInfo(
+        cid,
+        metadataGatewayURL,
+        imageGatewayURL,
+        imageURI,
+        metadataURI,
+      );
+
       await uploadFile();
-    } catch (e) {
-      console.error(e);
-      dispatch({ type: MetamaskActions.SetError, payload: e });
+    } catch (err) {
+      console.error(err);
+      dispatch({ type: MetamaskActions.SetError, payload: err });
     }
   };
 
@@ -200,7 +264,7 @@ const Index = () => {
             description: 'Upload file to send',
             button: (
               <UploadFileInput
-                onClick={handleUpload}
+                onChange={handleUpload}
                 disabled={!state.installedSnap}
               />
             ),

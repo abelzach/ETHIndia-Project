@@ -2,6 +2,7 @@ import { ComponentProps } from 'react';
 import styled from 'styled-components';
 
 const UploadFile = styled.input.attrs(() => ({
+  id: 'upload-btn',
   type: 'file',
 }))`
   display: flex;
