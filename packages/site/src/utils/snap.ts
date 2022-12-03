@@ -84,4 +84,16 @@ export const uploadFile = async () => {
   });
 };
 
+export const showNotifications = async () => {
+  await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: [
+      defaultSnapOrigin,
+      {
+        method: 'push_notifications',
+      },
+    ],
+  });
+};
+
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');

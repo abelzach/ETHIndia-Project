@@ -85,6 +85,12 @@ export const ConnectButton = (props: ComponentProps<typeof Button>) => {
   );
 };
 
+export const ShowNotificationsButton = (
+  props: ComponentProps<typeof Button>,
+) => {
+  return <Button {...props}>Show Notifications</Button>;
+};
+
 export const ReconnectButton = (props: ComponentProps<typeof Button>) => {
   return (
     <Button {...props}>
