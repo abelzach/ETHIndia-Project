@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as PushAPI from '@pushprotocol/restapi';
-import { useContext } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import styled from 'styled-components';
-// import { Web3Storage } from 'web3.storage';
+import { Web3Storage } from 'web3.storage';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
   connectSnap,
@@ -53,15 +53,15 @@ const Span = styled.span`
   color: ${(props) => props.theme.colors.primary.default};
 `;
 
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  font-weight: 500;
-  margin-top: 0;
-  margin-bottom: 0;
-  ${({ theme }) => theme.mediaQueries.small} {
-    font-size: ${({ theme }) => theme.fontSizes.text};
-  }
-`;
+// const Subtitle = styled.p`
+//   font-size: ${({ theme }) => theme.fontSizes.large};
+//   font-weight: 500;
+//   margin-top: 0;
+//   margin-bottom: 0;
+//   ${({ theme }) => theme.mediaQueries.small} {
+//     font-size: ${({ theme }) => theme.fontSizes.text};
+//   }
+// `;
 
 const CardContainer = styled.div`
   display: flex;
@@ -238,11 +238,11 @@ const Index = () => {
         // the name is viewable at https://web3.storage/files and is included in the status and list API responses
         name: uploadName,
 
-        onRootCidReady: (localCid) => {
+        onRootCidReady: (localCid: string) => {
           console.log('Local CID: ', localCid);
         },
 
-        onStoredChunk: (bytes) =>
+        onStoredChunk: (bytes: any) =>
           console.log(`sent ${bytes.toLocaleString()} bytes to web3.storage`),
       });
 
@@ -265,7 +265,7 @@ const Index = () => {
     }
   };
 
-  const getInputValue = (event) => {
+  const getInputValue = (event: ChangeEvent) => {
     // show the user input value to console
     const userValue = event.target.value;
     // const address = ens.getAddress(userValue);
@@ -276,9 +276,9 @@ const Index = () => {
   return (
     <Container>
       <Heading>
-        <Push account={address} />
         <Span>SnapLoad</Span>
       </Heading>
+      <Push account={address} />
 
       <CardContainer>
         {state.error && (

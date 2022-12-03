@@ -2,9 +2,10 @@
 import { EmbedSDK } from '@pushprotocol/uiembed';
 import { useEffect } from 'react';
 
-export const Push = (props) => {
-  const account = props.account;
+export const Push = (props: { account: string }) => {
+  const { account } = props;
   useEffect(() => {
+    console.log(account);
     if (account) {
       // 'your connected wallet address'
       EmbedSDK.init({

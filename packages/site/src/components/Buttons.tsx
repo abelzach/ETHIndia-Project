@@ -69,6 +69,12 @@ const ConnectedIndicator = styled.div`
   background-color: green;
 `;
 
+export const ShowNotificationsButton = (
+  props: ComponentProps<typeof Button>,
+) => {
+  return <Button {...props}>Show Notifications</Button>;
+};
+
 export const InstallFlaskButton = () => (
   <Link href="https://metamask.io/flask/" target="_blank">
     <FlaskFox />
@@ -83,12 +89,6 @@ export const ConnectButton = (props: ComponentProps<typeof Button>) => {
       <ButtonText>Connect</ButtonText>
     </Button>
   );
-};
-
-export const ShowNotificationsButton = (
-  props: ComponentProps<typeof Button>,
-) => {
-  return <Button {...props}>Show Notifications</Button>;
 };
 
 export const ReconnectButton = (props: ComponentProps<typeof Button>) => {
