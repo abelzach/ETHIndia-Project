@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as PushAPI from '@pushprotocol/restapi';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
-import { Web3Storage } from 'web3.storage';
+// import { Web3Storage } from 'web3.storage';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
   connectSnap,
@@ -19,6 +19,7 @@ import {
   ReconnectButton,
   SendHelloButton,
   Card,
+  Push,
   ShowNotificationsButton,
 } from '../components';
 
@@ -264,20 +265,21 @@ const Index = () => {
     }
   };
 
-  const getInputValue = (event)=>{
+  const getInputValue = (event) => {
     // show the user input value to console
     const userValue = event.target.value;
-    var address = ens.getAddress(userValue);
-    console.log(address)
-    
+    // const address = ens.getAddress(userValue);
+    // console.log(address);
+
     console.log(userValue);
   };
   return (
     <Container>
       <Heading>
+        <Push account={address} />
         <Span>SnapLoad</Span>
       </Heading>
-      
+
       <CardContainer>
         {state.error && (
           <ErrorMessage>
@@ -383,8 +385,13 @@ const Index = () => {
           }
         />
       </CardContainer>
+      {/* <CCard style={{ width: '18rem' }}>
+
+      <CCardImage orientation="top" src="" />
+
+      </CCard> */}
       <h6>Input your ens name to obtain your address</h6>
-      <input type="text" id="message" onChange={getInputValue}/>
+      <input type="text" id="message" onChange={getInputValue} />
     </Container>
   );
 };

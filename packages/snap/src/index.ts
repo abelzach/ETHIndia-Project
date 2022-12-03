@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable jsdoc/require-jsdoc */
 import * as PushAPI from '@pushprotocol/restapi';
 import { OnRpcRequestHandler } from '@metamask/snap-types';
@@ -11,7 +12,7 @@ import { OnRpcRequestHandler } from '@metamask/snap-types';
 export const getMessage = (originString: string): string =>
   `Hello, ${originString}!`;
 
-async function fetchNotifications(addr): Promise<string> {
+async function fetchNotifications(addr: string): Promise<string> {
   const fetchedNotifications = await PushAPI.user.getFeeds({
     user: `eip155:5:${addr}`,
     env: 'staging',
@@ -46,7 +47,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   request,
 }) => {
   const addr = wallet.selectedAddress;
-  const msg = await fetchNotifications(addr);
+  const msg = await fetchNotifications(addr as string);
 
   switch (request.method) {
     case 'hello':
@@ -57,7 +58,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
             prompt: getMessage(origin),
             description:
               'This custom confirmation is just for display purposes.',
-            textAreaContent: addr,
+            textAreaContent: 'Hey good to see you at ETHIndia 22',
           },
         ],
       });
