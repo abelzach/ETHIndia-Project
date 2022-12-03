@@ -278,7 +278,7 @@ const Index = () => {
       <Heading>
         <Span>SnapLoad</Span>
       </Heading>
-      <Push account={address} />
+      {address.length > 0 && <Push account={address} />}
 
       <CardContainer>
         {state.error && (

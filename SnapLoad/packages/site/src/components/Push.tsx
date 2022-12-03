@@ -34,5 +34,9 @@ export const Push = (props: { account: string }) => {
       EmbedSDK.cleanup();
     };
   }, []);
-  return <button id="sdk-trigger-id">PUSH</button>;
+  return (
+    <button id="sdk-trigger-id" style={{ fontSize: '3rem' }}>
+      
+    </button>
+  );
 };
