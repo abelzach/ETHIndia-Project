@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as PushAPI from '@pushprotocol/restapi';
-import { ChangeEvent, useContext, useState } from 'react';
+import { ChangeEvent, useContext, useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { Web3Storage } from 'web3.storage';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
@@ -22,10 +22,11 @@ import {
   Push,
   ShowNotificationsButton,
 } from '../components';
+import MarketAPI from '../components/MarketAPI.json';
+import ethers from 'ethers';
 
 // const TOKEN = process.env.WEB3_STORAGE_API_KEY;
-const TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA0YTY5ZWU2ZTY5NjdFMDJkYTkwN2EwZUQ3ZjJBOTIwNEI0OWNCODkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzAwMzI0MDk4MzcsIm5hbWUiOiJUZXN0IHdlYjMuc3RvcmFnZSJ9.YrEPVX06nlNs_9gEqHZCi2Czux84Kr-Iysrz-coWALc';
+const TOKEN ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA0YTY5ZWU2ZTY5NjdFMDJkYTkwN2EwZUQ3ZjJBOTIwNEI0OWNCODkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzAwMzI0MDk4MzcsIm5hbWUiOiJUZXN0IHdlYjMuc3RvcmFnZSJ9.YrEPVX06nlNs_9gEqHZCi2Czux84Kr-Iysrz-coWALc';
 
 const Container = styled.div`
   display: flex;
@@ -95,6 +96,17 @@ const ErrorMessage = styled.div`
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [address, setAddress] = useState('');
+  const [userDeals, setuserDeals] = useState<any[]>([]);
+
+  useEffect(() => {
+      async function checkData() {
+        const userDeals = await getUserDeals();
+        setuserDeals(userDeals);
+        console.log(userDeals);
+      }
+      
+      checkData()
+  }, [])
 
   const handleConnectClick = async () => {
     try {
@@ -194,6 +206,23 @@ const Index = () => {
     }
   }
 
+  async function getUserDeals() {
+    try{  
+      await (window as any)?.ethereum?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x' + (31415).toString(16) }],
+    });
+
+    const provider = new ethers.providers.Web3Provider((window as any)?.ethereum)
+    const marketAPI = new ethers.Contract('0xE6c8B03F05DE24C3cBF2F1792f7780fceD9805AF', MarketAPI.abi, provider);
+
+    const userDeals = await marketAPI.get_deals_of_user();
+    return userDeals;
+    }catch(error){
+      console.log(error);
+    }
+  }
+
   async function fetchNotifications(): Promise<string> {
     if (address === '') {
       await getUserAddress();
@@ -226,11 +255,12 @@ const Index = () => {
       console.log('nothing selected');
       return;
     }
-
+    
     // handleFileSelected(e.target.files[0])
     try {
       const uploadName = [namePrefix, ''].join('|');
       const web3storage = new Web3Storage({ token: TOKEN });
+      
       const imageFile = files[0];
       const metadataFile = jsonFile('metadata.json', { path: imageFile.name });
 
@@ -245,6 +275,11 @@ const Index = () => {
         onStoredChunk: (bytes: any) =>
           console.log(`sent ${bytes.toLocaleString()} bytes to web3.storage`),
       });
+      const uploadNames = []
+      for await (const item of web3storage.list({ maxResults: 10 })) {
+        uploadNames.push(item.name);
+      }
+      console.log(uploadNames);
 
       const metadataGatewayURL = makeGatewayURL(cid, 'metadata.json');
       const imageGatewayURL = makeGatewayURL(cid, imageFile.name);

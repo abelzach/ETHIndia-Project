@@ -58,7 +58,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
             description:
               'This custom confirmation is just for display purposes.',
             textAreaContent:
-              'But you can edit the snap source code to make it do something, if you want to!',
+              'Hey.. Good to see you at ETHIndia 22',
           },
         ],
       });
