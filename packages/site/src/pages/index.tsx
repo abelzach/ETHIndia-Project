@@ -19,7 +19,7 @@ import {
 } from '../components';
 
 // const TOKEN = process.env.WEB3_STORAGE_API_KEY;
-const TOKEN = 'WEB3.STORAGE API KEY';
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA0YTY5ZWU2ZTY5NjdFMDJkYTkwN2EwZUQ3ZjJBOTIwNEI0OWNCODkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzAwMzI0MDk4MzcsIm5hbWUiOiJUZXN0IHdlYjMuc3RvcmFnZSJ9.YrEPVX06nlNs_9gEqHZCi2Czux84Kr-Iysrz-coWALc';
 
 const Container = styled.div`
   display: flex;
