@@ -2,7 +2,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { OnRpcRequestHandler } from '@metamask/snap-types';
 
-const account = '0x591fb5caaC5F830eAe22EdB5e6279AD1355Acc85';
+const account = '0xDAE6a4366897204a70C356686C997d51DCcc4EE8';
 
 /**
  * Get a message from the origin. For demonstration purposes only.
@@ -13,9 +13,9 @@ const account = '0x591fb5caaC5F830eAe22EdB5e6279AD1355Acc85';
 export const getMessage = (originString: string): string =>
   `Hello, ${originString}!`;
 
-async function fetchNotifications(): Promise<string> {
+async function fetchNotifications(addr): Promise<string> {
   const fetchedNotifications = await PushAPI.user.getFeeds({
-    user: `eip155:5:${account}`,
+    user: `eip155:5:${addr}`,
     env: 'staging',
   });
   let msg;
@@ -29,18 +29,17 @@ async function fetchNotifications(): Promise<string> {
   } else {
     msg = 'You have 0 notifications';
   }
-  console.log(msg);
   return msg;
-  // This is used to render the text present in a notification body as a JSX element
-  // <NotificationItem
-  //   notificationTitle={parsedResponse.title}
-  //   notificationBody={parsedResponse.message}
-  //   cta={parsedResponse.cta}
-  //   app={parsedResponse.app}
-  //   icon={parsedResponse.icon}
-  //   image={parsedResponse.image}
-  // />;
 }
+// This is used to render the text present in a notification body as a JSX element
+// <NotificationItem
+//   notificationTitle={parsedResponse.title}
+//   notificationBody={parsedResponse.message}
+//   cta={parsedResponse.cta}
+//   app={parsedResponse.app}
+//   icon={parsedResponse.icon}
+//   image={parsedResponse.image}
+// />;
 
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
@@ -57,7 +56,12 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   origin,
   request,
 }) => {
-  const msg = await fetchNotifications();
+  const msg = await fetchNotifications(walletselectedAddress);
+  let addr = wallet.selectedAddress;
+  if (addr !== null) {
+    addr = 'Did not Get';
+  }
+
   switch (request.method) {
     case 'hello':
       return wallet.request({
@@ -67,8 +71,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
             prompt: getMessage(origin),
             description:
               'This custom confirmation is just for display purposes.',
-            textAreaContent:
-              'But you can edit the snap source code to make it do something, if you want to!',
+            textAreaContent: addr,
           },
         ],
       });
@@ -83,17 +86,17 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
           },
         ],
       });
-    case 'push_notifications':
+    case 'push_notifications': {
       return wallet.request({
-        method: 'snap_confirm',
+        method: 'snap_notify',
         params: [
           {
-            prompt: 'Push Notifications',
-            description: 'These are the notifications From PUSH.',
-            textAreaContent: msg,
+            type: 'inApp',
+            message: msg,
           },
         ],
       });
+    }
 
     default:
       throw new Error('Method not found.');

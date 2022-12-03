@@ -1,4 +1,6 @@
-import { useContext } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+import * as PushAPI from '@pushprotocol/restapi';
+import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { Web3Storage } from 'web3.storage';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
@@ -71,25 +73,6 @@ const CardContainer = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Notice = styled.div`
-  background-color: ${({ theme }) => theme.colors.background.alternative};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  color: ${({ theme }) => theme.colors.text.alternative};
-  border-radius: ${({ theme }) => theme.radii.default};
-  padding: 2.4rem;
-  margin-top: 2.4rem;
-  max-width: 60rem;
-  width: 100%;
-
-  & > * {
-    margin: 0;
-  }
-  ${({ theme }) => theme.mediaQueries.small} {
-    margin-top: 1.2rem;
-    padding: 1.6rem;
-  }
-`;
-
 const ErrorMessage = styled.div`
   background-color: ${({ theme }) => theme.colors.error.muted};
   border: 1px solid ${({ theme }) => theme.colors.error.default};
@@ -110,10 +93,12 @@ const ErrorMessage = styled.div`
 
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
+  const [address, setAddress] = useState('');
 
   const handleConnectClick = async () => {
     try {
       await connectSnap();
+      await getUserAddress();
       const installedSnap = await getSnap();
 
       dispatch({
@@ -160,12 +145,77 @@ const Index = () => {
   const handleShowNotificationsClick = async () => {
     try {
       await showNotifications();
+      await fetchNotifications();
       // await fetchNotifications();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
     }
   };
+
+  async function getUserAddress() {
+    try {
+      window.ethereum
+        .request({
+          method: 'wallet_enable',
+          // This entire object is ultimately just a list of requested permissions.
+          // Every snap has an associated permission or permissions, given the prefix `wallet_snap_`
+          // and its ID. Here, the `wallet_snap` property exists so that callers don't
+          // have to specify the full permission permission name for each snap.
+          params: [
+            {
+              wallet_snap: {
+                'npm:@metamask/example-snap': {},
+                'npm:fooSnap': {
+                  // The optional version argument allows requesting
+                  // SemVer version range, with semantics same as in
+                  // package.json ranges.
+                  version: '^1.0.2',
+                },
+              },
+              eth_accounts: {},
+            },
+          ],
+        })
+        .then((res) => {
+          if ((res as { accounts: string[] }) !== null) {
+            setAddress((res as { accounts: string[] }).accounts[0]);
+          }
+        });
+    } catch (error) {
+      // The `wallet_enable` call will throw if the requested permissions are
+      // rejected.
+      if (error.code === 4001) {
+        console.log('The user rejected the request.');
+      } else {
+        console.log('Unexpected error:', error);
+      }
+    }
+  }
+
+  async function fetchNotifications(): Promise<string> {
+    if (address === '') {
+      await getUserAddress();
+    }
+    console.log(`eip155:5:${address}`);
+    const fetchedNotifications = await PushAPI.user.getFeeds({
+      user: `eip155:5:${address}`,
+      env: 'staging',
+    });
+    let msg;
+    // Parse the notification fetched
+    if (fetchedNotifications) {
+      msg = `You have ${fetchedNotifications.length} notifications\n`;
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      for (let i = 0; i < fetchedNotifications.length; i++) {
+        msg += `${fetchedNotifications[i].title} ${fetchedNotifications[i].message}\n`;
+      }
+    } else {
+      msg = 'You have 0 notifications';
+    }
+    console.log(msg);
+    return msg;
+  }
 
   const handleUpload = async (e: InputEvent) => {
     const namePrefix = 'ImageGallery';
@@ -214,6 +264,14 @@ const Index = () => {
     }
   };
 
+  const getInputValue = (event)=>{
+    // show the user input value to console
+    const userValue = event.target.value;
+    var address = ens.getAddress(userValue);
+    console.log(address)
+    
+    console.log(userValue);
+  };
   return (
     <Container>
       <Heading>
@@ -326,15 +384,9 @@ const Index = () => {
             !shouldDisplayReconnectButton(state.installedSnap)
           }
         />
-        <Notice>
-          <p>
-            Please note that the <b>snap.manifest.json</b> and{' '}
-            <b>package.json</b> must be located in the server root directory and
-            the bundle must be hosted at the location specified by the location
-            field.
-          </p>
-        </Notice>
       </CardContainer>
+      <h6>Input your ens name to obtain your address</h6>
+      <input type="text" id="message" onChange={getInputValue}/>
     </Container>
   );
 };
