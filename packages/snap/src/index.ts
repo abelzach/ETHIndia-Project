@@ -2,7 +2,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { OnRpcRequestHandler } from '@metamask/snap-types';
 
-const account = '0x591fb5caaC5F830eAe22EdB5e6279AD1355Acc85';
+const account = '0x8BdB96506a636C32AEcf2eFae72d59bA35B80E5b';
 
 /**
  * Get a message from the origin. For demonstration purposes only.

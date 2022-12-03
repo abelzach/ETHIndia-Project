@@ -3,9 +3,9 @@ import styled, { useTheme } from 'styled-components';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import { connectSnap, getThemePreference, getSnap } from '../utils';
 import { HeaderButtons } from './Buttons';
-import { SnapLogo } from './SnapLogo';
+//import { SnapLogo } from './SnapLogo';
 import { Toggle } from './Toggle';
-
+var Web3 = require('web3');
 const HeaderWrapper = styled.header`
   display: flex;
   flex-direction: row;
@@ -62,8 +62,8 @@ export const Header = ({
   return (
     <HeaderWrapper>
       <LogoWrapper>
-        <SnapLogo color={theme.colors.icon.default} size={36} />
-        <Title>template-snap</Title>
+        {/* <SnapLogo color={theme.colors.icon.default} size={36} /> */}
+        <Title>SnapLoad</Title>
       </LogoWrapper>
       <RightContainer>
         <Toggle
