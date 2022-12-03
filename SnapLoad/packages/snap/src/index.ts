@@ -46,8 +46,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   origin,
   request,
 }) => {
-  const addr = wallet.selectedAddress;
-  const msg = await fetchNotifications(addr as string);
+  // const addr = wallet.selectedAddress;
 
   switch (request.method) {
     case 'hello':
@@ -75,6 +74,9 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
         ],
       });
     case 'push_notifications': {
+      const msg = await fetchNotifications(
+        '0x8e1cc3148a6D10b28859dd2d5e26663b01f64E73',
+      );
       return wallet.request({
         method: 'snap_confirm',
         params: [
