@@ -390,7 +390,7 @@ const Index = () => {
       <CCardImage orientation="top" src="" />
 
       </CCard> */}
-      <h6>Input your ens name to obtain your address</h6>
+      <p>Input your ens name to obtain your address</p>
       <input type="text" id="message" onChange={getInputValue} />
     </Container>
   );

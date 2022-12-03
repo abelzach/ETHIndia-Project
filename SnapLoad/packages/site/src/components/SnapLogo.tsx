@@ -1,8 +1,8 @@
 export const SnapLogo = ({ color, size }: { color: string; size: number }) => (
   <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="250.000000pt" height="250.000000pt" viewBox="0 0 250.000000 250.000000"
+ width="60.000000pt" height="60.000000pt" viewBox="0 0 60.000000 60.000000"
  preserveAspectRatio="xMidYMid meet">
-<g transform="translate(0.000000,250.000000) scale(0.040388,-0.050100)"
+<g transform="translate(0.000000,60.000000) scale(0.009693,-0.012024)"
 fill="#000000" stroke="none">
 <path d="M0 2495 l0 -2495 3095 0 3095 0 0 2495 0 2495 -3095 0 -3095 0 0
 -2495z m1915 649 c55 -59 53 -143 -3 -198 -80 -75 -204 -40 -233 66 -13 48 -1
@@ -60,4 +60,4 @@ m-1503 -35 c45 -27 62 -84 38 -129 -36 -71 -138 -73 -178 -3 -17 29 -18 39 -8
 66 66 66 111 0 59 -59 105 -115 90z"/>
 </g>
 </svg>
-);
+)
