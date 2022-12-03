@@ -2,8 +2,6 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { OnRpcRequestHandler } from '@metamask/snap-types';
 
-const account = '0xDAE6a4366897204a70C356686C997d51DCcc4EE8';
-
 /**
  * Get a message from the origin. For demonstration purposes only.
  *
@@ -31,15 +29,6 @@ async function fetchNotifications(addr): Promise<string> {
   }
   return msg;
 }
-// This is used to render the text present in a notification body as a JSX element
-// <NotificationItem
-//   notificationTitle={parsedResponse.title}
-//   notificationBody={parsedResponse.message}
-//   cta={parsedResponse.cta}
-//   app={parsedResponse.app}
-//   icon={parsedResponse.icon}
-//   image={parsedResponse.image}
-// />;
 
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
@@ -56,11 +45,8 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   origin,
   request,
 }) => {
-  const msg = await fetchNotifications(walletselectedAddress);
-  let addr = wallet.selectedAddress;
-  if (addr !== null) {
-    addr = 'Did not Get';
-  }
+  const addr = wallet.selectedAddress;
+  const msg = await fetchNotifications(addr);
 
   switch (request.method) {
     case 'hello':
@@ -88,11 +74,12 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
       });
     case 'push_notifications': {
       return wallet.request({
-        method: 'snap_notify',
+        method: 'snap_confirm',
         params: [
           {
-            type: 'inApp',
-            message: msg,
+            prompt: 'Push Notifications',
+            description: 'These are the notifications From PUSH.',
+            textAreaContent: msg,
           },
         ],
       });
