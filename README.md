@@ -1,7 +1,7 @@
 # SnapLoad
 ### ETHIndia 22' Submission
 
-![logo](logo.jpg?raw=true)
+![logo](logo.png?raw=true)
 
 A Metamask snap for decentralized file storage and management with FEVM and IPFS along with PUSH notifications.
 
